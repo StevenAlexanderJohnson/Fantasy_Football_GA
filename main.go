@@ -12,6 +12,19 @@ import (
 	"os/exec"
 )
 
+/*
+This function will collect the player data from the text file if it exists, otherwise it will run the python script to collect the data.
+Once the data is collected it will be read into a linked list of player data structs.
+
+Parameters:
+
+	linked_list: A pointer to the linked list that will be used to store the player data.
+	refresh_data: A boolean that determines if you want to refresh the player data.
+
+Returns:
+
+	None
+*/
 func collect_player_data(linked_list *Structs.Linked_List, refresh_data bool) {
 	if _, err := os.Stat("./Saved_Data"); os.IsNotExist(err) {
 		os.Mkdir("./Saved_Data", 0777)
@@ -69,9 +82,9 @@ func main() {
 		// Score the teams then sort
 		GAF.Score_teams(team_list)
 		// Get the new population from the crossover function
-		team_list = GAF.Crossover(team_list, player_list)
+		team_list = GAF.Crossover(team_list)
 		// Mutate some of the population
-		GAF.Mutate(team_list, player_list)
+		GAF.Mutate(team_list, &player_list)
 		// Print progress report
 		fmt.Printf("Generating your team... %v%v\r", fmt.Sprintf("%d", int(float64(i)/float64(*generation_count)*100)), "%")
 	}

@@ -5,6 +5,18 @@ import (
 	"math/rand"
 )
 
+/*
+Generate a team to compete in the fantasy football league
+
+Parameters:
+
+	athletes: The list of athletes to choose from.
+	return_channel: The channel to return the team to.
+
+Returns:
+
+	An array of players that make up the team.
+*/
 func Generate_Team(athletes *Structs.Linked_List, return_channel chan []Structs.Player_Data) {
 	var random_Players []int
 	// Generate a team of 16 Players, they will choose who to bench once the team is generated.
@@ -30,7 +42,19 @@ func Generate_Team(athletes *Structs.Linked_List, return_channel chan []Structs.
 	// return generated_Players
 }
 
-func score_team(team *Structs.Team, channel chan bool) {
+/*
+Score a team based on the players' stats.
+
+Parameters:
+
+	team: The team to be scored.
+
+Returns:
+
+	Nothing
+*/
+func score_team(team *Structs.Team) {
+	team.Score = 0
 	for i := 0; i < len(team.Players); i++ {
 		team.Score += int32(team.Players[i].Stats.Passing) / 25
 		team.Score += int32(team.Players[i].Stats.Rushing) / 10
@@ -50,7 +74,6 @@ func score_team(team *Structs.Team, channel chan bool) {
 		team.Score += int32(team.Players[i].Stats.DefensiveTouchdowns) * 6
 		team.Score += int32(team.Players[i].Stats.BlockedKicks) * 2
 	}
-	channel <- true
 }
 
 // Simple insertion sort bsed on the Score
@@ -64,18 +87,36 @@ func insertion_sort(team_list []Structs.Team) {
 	}
 }
 
+/*
+Score all of the teams in the population
+
+Parameters:
+
+	teams: The teams to be scored.
+
+Returns:
+
+	Nothing
+*/
 func Score_teams(teams []Structs.Team) {
-	finish_chan := make(chan bool)
 	for i := 0; i < len(teams); i++ {
-		go score_team(&teams[i], finish_chan)
-	}
-	for i := 0; i < len(teams); i++ {
-		<-finish_chan
+		go score_team(&teams[i])
 	}
 	insertion_sort(teams)
 }
 
-func Crossover(teams []Structs.Team, athletes Structs.Linked_List) []Structs.Team {
+/*
+Takes the population and simulates trading players between teams
+
+Parameters:
+
+	teams: The teams to crossover.
+
+Returns:
+
+	The new list of teams.
+*/
+func Crossover(teams []Structs.Team) []Structs.Team {
 	// Keep the top half of the previous population, the rest are killed off
 	output := teams[:len(teams)/2]
 	// Split teams into fitness
@@ -139,7 +180,19 @@ func Crossover(teams []Structs.Team, athletes Structs.Linked_List) []Structs.Tea
 	return output
 }
 
-func Mutate(team []Structs.Team, athletes Structs.Linked_List) {
+/*
+Mutates a member of the population by swapping a random player with a random athlete
+
+Parameters:
+
+	team: The team to be mutated.
+	athletes: The list of athletes to choose from.
+
+Returns:
+
+	Nothing
+*/
+func Mutate(team []Structs.Team, athletes *Structs.Linked_List) {
 	// Mutate 5% of the population
 	mutate_number := int(float64(len(team)) * .05)
 	for i := 0; i < mutate_number; i++ {

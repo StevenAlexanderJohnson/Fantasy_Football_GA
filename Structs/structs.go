@@ -1,7 +1,5 @@
 package structs
 
-import "fmt"
-
 // Structs to hold the player information
 type Player_Data struct {
 	FullName string       `json:"fullName"`
@@ -74,14 +72,4 @@ func (l *Linked_List) Select(index int) Player_Data {
 		temp = temp.Next
 	}
 	return temp.Value
-}
-
-// Method to print out the linked list
-func (l *Linked_List) Print() {
-	current_node := l.Head
-	for current_node != nil {
-		// fmt.Println(current_node.value.FullName)
-		fmt.Printf("Name: %v, Age: %d, Receiving: %f\n", current_node.Value.FullName, current_node.Value.Age, current_node.Value.Stats.Receiving)
-		current_node = current_node.Next
-	}
 }
