@@ -1,7 +1,7 @@
 package GAF
 
 import (
-	Structs "fantasy_football/Structs"
+	"fantasy_football/Structs"
 	"math/rand"
 )
 
@@ -18,6 +18,11 @@ Returns:
 	An array of players that make up the team.
 */
 func Generate_Team(athletes *Structs.Linked_List, return_channel chan []Structs.Player_Data) {
+	// If there are less than 17 athletes, there is no enough players to generate at least two teams.
+	if athletes == nil || athletes.Count < 17 {
+		return_channel <- []Structs.Player_Data{}
+		return
+	}
 	var random_Players []int
 	// Generate a team of 16 Players, they will choose who to bench once the team is generated.
 	for i := 0; i < 16; i++ {
@@ -38,8 +43,8 @@ func Generate_Team(athletes *Structs.Linked_List, return_channel chan []Structs.
 	for _, value := range random_Players {
 		generated_Players = append(generated_Players, athletes.Select(value))
 	}
+	// return generated_Players through the channel
 	return_channel <- generated_Players
-	// return generated_Players
 }
 
 /*
@@ -76,7 +81,7 @@ func score_team(team *Structs.Team) {
 	}
 }
 
-// Simple insertion sort bsed on the Score
+// Simple insertion sort based on the Score
 func insertion_sort(team_list []Structs.Team) {
 	for i := 1; i < len(team_list); i++ {
 		for j := i; j > 0; j-- {
@@ -123,7 +128,7 @@ func Crossover(teams []Structs.Team) []Structs.Team {
 	most_fit := teams[:int(float64(len(teams))*0.5)]
 	well_fit := teams[int(float64(len(teams))*0.5):int(float64(len(teams))*0.8)]
 	worst_fit := teams[int(float64(len(teams))*0.8):]
-	// Regnerate the population with the offspring
+	// Regenerate the population with the offspring
 	var team1 Structs.Team
 	var team2 Structs.Team
 	team2_select := false

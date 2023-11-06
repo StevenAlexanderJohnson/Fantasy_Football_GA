@@ -1,4 +1,4 @@
-package structs
+package Structs
 
 // Structs to hold the player information
 type Player_Data struct {
